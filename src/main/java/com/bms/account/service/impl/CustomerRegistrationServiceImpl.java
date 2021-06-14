@@ -1,15 +1,12 @@
 package com.bms.account.service.impl;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bms.account.entity.Customer;
-import com.bms.account.entity.Loan;
 import com.bms.account.repo.CustomerRepository;
-import com.bms.account.repo.LoanRepository;
 import com.bms.account.service.CustomerRegistrationService;
 
 import reactor.core.publisher.Mono;
@@ -17,29 +14,21 @@ import reactor.core.publisher.Mono;
 @Service
 public class CustomerRegistrationServiceImpl implements CustomerRegistrationService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerRegistrationServiceImpl.class);
+
 	@Autowired
 	private CustomerRepository customerRepository;
 
-	@Autowired
-	private LoanRepository loanRepository;
-
 	@Override
 	public Mono<Customer> registerCustomer(Customer customer) {
-		return customerRepository.save(customer);
+		return customerRepository.save(customer)
+				.doOnSuccess(cus -> LOGGER.info("Customer registered: accountno={}", cus.getAccountno()));
 	}
 
 	@Override
 	public Mono<Customer> viewCustomer(Customer customer) {
-		return customerRepository.findByUsernameAndPassword(customer.getUsername(), customer.getPassword());
-	}
-
-	@Override
-	public Mono<Loan> applyLoan(Loan loan) {
-		Mono<Customer> customer = customerRepository.findById(loan.getAccountno());
-		return customer.flatMap(customerDetails -> {
-			 loan.setDate(new Date(System.currentTimeMillis()));
-			return loanRepository.save(loan);
-		});
+		LOGGER.info("viewCustomer: username={}", customer.getAccountno());
+		return customerRepository.findById(customer.getAccountno());
 	}
 
 }

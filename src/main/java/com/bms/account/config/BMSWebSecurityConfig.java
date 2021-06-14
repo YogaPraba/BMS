@@ -27,7 +27,7 @@ public class BMSWebSecurityConfig {
         http.csrf()
             .disable()
             .authorizeExchange()
-            .pathMatchers("/bms/customer/register").permitAll()
+            //.pathMatchers("/bms/customer/register").permitAll()
             .pathMatchers("/bms")
             .hasRole("bms")          
             .pathMatchers("/**")

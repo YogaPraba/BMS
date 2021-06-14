@@ -2,6 +2,8 @@ package com.bms.account.controller;
 
 import java.net.URISyntaxException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,8 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/bms")
 public class BMSController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(BMSController.class);
+	
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
 	
@@ -28,6 +32,7 @@ public class BMSController {
 	@PostMapping("/customer/register")
 	public Mono<Customer> registerCustomer(@RequestBody Customer customer)
 			throws URISyntaxException {
+		LOGGER.info("New Customer Registration!!");
 		customer.setPassword(encoder.encode(customer.getPassword()));
 		return customerRegistrationService.registerCustomer(customer);
 	}
@@ -35,14 +40,9 @@ public class BMSController {
 	@GetMapping("/customer/view")
 	public Mono<Customer> viewCustomerDetails(@RequestBody Customer customer)
 			throws URISyntaxException {
+		LOGGER.info("View Customer Details!!");
 		customer.setPassword(encoder.encode(customer.getPassword()));
 		return customerRegistrationService.viewCustomer(customer);
 	}
 	
-	
-//	@PostMapping("/loan/apply")
-//	public Mono<Loan> applyLoan(@RequestBody Loan loan)
-//			throws URISyntaxException {
-//		return customerRegistrationService.applyLoan(loan);
-//	}
 }
